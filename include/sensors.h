@@ -72,6 +72,9 @@ float gyro_z;
 ADC::Sync_result emitter_on;
 ADC::Sync_result emitter_off;
 
+long previous_encoder_count_left = 0;
+long previous_encoder_count_right = 0;
+
 // Functions that take use of the ADC
 void init_adc();
 void read_proximity_sensors();
@@ -88,6 +91,7 @@ void read_accelerometer();
 
 // Functions that take use of the Encoders
 void clear_encoders();
+relative_position_t get_ecnoder_position_change_since_last_read();
 relative_position_t get_encoder_relative_position();
 
 

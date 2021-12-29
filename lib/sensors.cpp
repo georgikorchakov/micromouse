@@ -170,16 +170,30 @@ void clear_encoders()
     right_encoder.write(0);
 }
 
-relative_position_t get_encoder_relative_position()
+relative_position_t get_ecnoder_position_change_since_last_read()
+{
+    relative_position_t relative_position;
+    long left_encoder_change = left_encoder.read() - previous_encoder_count_left;
+    long right_encoder_change = right_encoder.read() - previous_encoder_count_right;
+
+    relative_position.distance = 
+        (float)(right_encoder_change + left_encoder_change) * MM_PER_COUNT;
+    relative_position.angle = 
+        (float)(right_encoder_change - left_encoder_change) * DEG_PER_COUNT;
+
+    return relative_position;
+}
+
+relative_position_t get_encoder_position()
 {
     relative_position_t relative_position;
     left_encoder_count = left_encoder.read();
-    right_encoder_count = left_encoder.read();
+    right_encoder_count = right_encoder.read();
 
     relative_position.distance = 
-        (right_encoder_count + left_encoder_count) * MM_PER_COUNT;
+        (float)(right_encoder_count + left_encoder_count) * MM_PER_COUNT;
     relative_position.angle = 
-        (right_encoder_count - left_encoder_count) * DEG_PER_COUNT;
+        (float)(right_encoder_count - left_encoder_count) * DEG_PER_COUNT;
 
     return relative_position;
 }
