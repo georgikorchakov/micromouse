@@ -16,6 +16,8 @@
 #define PROFILE_STATE_FINISHED     3
 
 #define SYSTICK_PERIOD 0.001 // 1ms
+#define SYSTICK_INTERRUPT_TIME_MICRO_SECONDS 1000
+#define SYSTICK_INTERRUPT_PRIORITY 130
 #define ACCEPTABLE_DISTANCE_FOR_FINISH 0.125 // mm
 
 #define KP_S 1f
@@ -23,7 +25,7 @@
 #define KP_R 1f
 #define KD_R 0f
 
-IntervalTimer myTimer;
+IntervalTimer systick_interrupt;
 
 extern float speed_error;
 extern float rotation_error;
@@ -34,6 +36,9 @@ extern volatile uint8_t controller_output_enable;
 // This function will be executed with the interupts 
 // from the IntervalTimer.h library on every 1 milisecond
 void systick();
+
+uint8_t start_systick_interrupt();
+void stop_systick_interrupt();
 
 float speed_controller(profile_t* speed_profile, float real_distance_change);
 float rotation_controller(profile_t* rotation_profile, float real_angle_change);

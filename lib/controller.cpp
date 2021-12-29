@@ -36,6 +36,24 @@ void systick()
     }
 }
 
+uint8_t start_systick_interrupt()
+{
+    systick_interrupt.priority(SYSTICK_INTERRUPT_PRIORITY);
+    uint8_t ok = systick_interrupt.begin(systick, SYSTICK_INTERRUPT_TIME_MICRO_SECONDS);
+
+    if (!ok)
+    {
+        // Serial.println("[Error] Failed to start systick interupt");
+    }
+
+    return ok;
+}
+
+void stop_systick_interrupt()
+{
+    systick_interrupt.end();
+}
+
 float speed_controller(profile_t* speed_profile, float real_distance_change)
 {
     speed_error += 
