@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "header.h"
 #include "sensors.h"
+#include "motor_driver.h"
 #include <util/atomic.h>
 
 // This library provides us a regular interupt capabilities
@@ -17,11 +18,27 @@
 #define SYSTICK_PERIOD 0.001 // 1ms
 #define ACCEPTABLE_DISTANCE_FOR_FINISH 0.125 // mm
 
+#define KP_S 1f
+#define KD_S 0f
+#define KP_R 1f
+#define KD_R 0f
+
 IntervalTimer myTimer;
+
+extern float speed_error;
+extern float rotation_error;
+extern float previous_speed_error;
+extern float previous_rotation_error;
+extern volatile uint8_t controller_output_enable;
 
 // This function will be executed with the interupts 
 // from the IntervalTimer.h library on every 1 milisecond
 void systick();
+
+float speed_controller(profile_t* speed_profile, float real_distance_change);
+float rotation_controller(profile_t* rotation_profile, float real_angle_change);
+void start_controller_output();
+void stop_controller_output();
 
 ////////////////////////////////////////////////////////////
 // Profiler
@@ -38,6 +55,9 @@ typedef struct {
     volatile uint8_t state;
     int8_t sign;
 } profile_t;
+
+extern profile_t* speed_profile;
+extern profile_t* angle_profile;
 
 profile_t* init_profile();
 void profile_start(profile_t* profile, float distance, float max_speed, float final_speed, float acceleration);

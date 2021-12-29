@@ -1,5 +1,15 @@
 #include "controller.h"
 
+profile_t* speed_profile = init_profile();
+profile_t* angle_profile = init_profile();
+
+volatile uint8_t controller_output_enable = false;
+
+float speed_error = 0;
+float rotation_error = 0;
+float previous_speed_error = 0;
+float previous_rotation_error = 0;
+
 // Just to acknowledge. This function will probably violate 
 // all of the recommendations of interrupt functions. 
 // We should pay attention, because many things may go wrong.
@@ -8,9 +18,57 @@ void systick()
     // Read the encoders
     // For now I will write this code like I will use encoders only.
     // Gyroscope and proximity sensors will be added after that.
-    relative_position_t relative_position = get_encoder_relative_position();
+    relative_position_t position_change = get_ecnoder_position_change_since_last_read();
+
+    profile_update(speed_profile);
+    profile_update(angle_profile);
+
+    float speed_output = speed_controller(speed_profile, position_change.distance);
+    float rotation_output = rotation_controller(angle_profile, position_change.angle);
+
+    float left_motor_pwm = voltage_to_pwm(speed_output - rotation_output);
+    float right_motor_pwm = voltage_to_pwm(speed_output + rotation_output);
+
+    if (controller_output_enable)
+    {
+        set_left_motor_pwm(left_motor_pwm);
+        set_right_motor_pwm(right_motor_pwm);
+    }
 }
 
+float speed_controller(profile_t* speed_profile, float real_distance_change)
+{
+    speed_error += 
+        profile_get_distance_by_one_systick(speed_profile) - real_distance_change;
+    
+    float output = KP_S * speed_error + KD_S * (speed_error - previous_speed_error);
+
+    previous_speed_error = speed_error;
+
+    return output;
+}
+
+float rotation_controller(profile_t* rotation_profile, float real_angle_change)
+{
+    rotation_error += 
+        profile_get_distance_by_one_systick(rotation_profile) - real_angle_change;
+
+    float output = KP_R * rotation_error + KD_R * (rotation_error - previous_rotation_error);
+
+    previous_rotation_error = rotation_error;
+
+    return output;
+}
+
+void start_controller_output()
+{
+    controller_output_enable = true;
+}
+
+void stop_controller_output()
+{
+    controller_output_enable = false;
+}
 
 ////////////////////////////////////////////////////////////
 // Profiler
@@ -19,6 +77,13 @@ void systick()
 profile_t* init_profile()
 {
     profile_t* profile = (profile_t*)malloc(sizeof(profile_t));
+
+    if (!profile)
+    {
+        // Serial.println("[Error] Faild to allocate profile_t*");
+        return NULL;
+    }
+
     // TODO: check malloc
     profile->speed = 0;
     profile->position = 0;
