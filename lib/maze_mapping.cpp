@@ -1,4 +1,4 @@
-#include "maze_mapping.h"
+#include "../include/maze_mapping.h"
 
 // From the start, the maze will be seen as:
 //        NORT
@@ -9,6 +9,8 @@
 //         V
 //       SOUTH
 // NORTH | EAST | SOUTH | WEST
+
+uint8_t maze[MAZE_SIZE_Y][MAZE_SIZE_X];
 
 void init_maze()
 {

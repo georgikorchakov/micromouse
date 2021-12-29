@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define MAZE_SIZE_X 16
 #define MAZE_SIZE_Y 16
@@ -20,7 +21,7 @@
 #define OPEN_MAZE   0
 #define CLOSED_MAZE 4
 
-uint8_t maze[MAZE_SIZE_Y][MAZE_SIZE_X] = {{0}};
+extern uint8_t maze[MAZE_SIZE_Y][MAZE_SIZE_X];
 
 void init_maze();
 void print_maze(uint8_t maze_select);
