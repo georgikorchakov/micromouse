@@ -45,14 +45,24 @@ void init_adc()
     adc->adc1->setConversionSpeed(ADC_CONVERSION_SPEED::HIGH_SPEED);
 }
 
-void read_proximity_sensors()
+void init_proximity_sensors_struct(proximity_sensors_t* proximity_sensors)
 {
-    read_proximity_sensors_front();
-    read_proximity_sensors_diagonal();
-    read_proximity_sensors_side();
+    proximity_sensors->front_left_sensor = 0;
+    proximity_sensors->front_right_sensor = 0;
+    proximity_sensors->diagonal_left_sensor = 0;
+    proximity_sensors->diagonal_right_sensor = 0;
+    proximity_sensors->side_left_sensor = 0;
+    proximity_sensors->side_right_sensor = 0;
 }
 
-void read_proximity_sensors_front()
+void read_proximity_sensors(proximity_sensors_t* proximity_sensors)
+{
+    read_proximity_sensors_front(proximity_sensors);
+    read_proximity_sensors_diagonal(proximity_sensors);
+    read_proximity_sensors_side(proximity_sensors);
+}
+
+void read_proximity_sensors_front(proximity_sensors_t* proximity_sensors)
 {
     emitter_off = adc->analogSyncRead(SENSOR_FRONT_LEFT, SENSOR_FRONT_RIGHT);
 
@@ -63,11 +73,11 @@ void read_proximity_sensors_front()
 
     digitalWriteFast(FRONT_DIODES, LOW);
 
-    front_left_sensor = (uint16_t)emitter_on->result_adc0 - (uint16_t)emitter_off->result_adc0;
-    front_right_sensor = (uint16_t)emitter_on->result_adc1 - (uint16_t)emitter_off->result_adc1;
+    proximity_sensors->front_left_sensor = (uint16_t)emitter_on->result_adc0 - (uint16_t)emitter_off->result_adc0;
+    proximity_sensors->front_right_sensor = (uint16_t)emitter_on->result_adc1 - (uint16_t)emitter_off->result_adc1;
 }
 
-void read_proximity_sensors_diagonal()
+void read_proximity_sensors_diagonal(proximity_sensors_t* proximity_sensors)
 {
     emitter_off = adc->analogSyncRead(SENSOR_DIAGONALS_LEFT, SENSOR_DIAGONALS_RIGHT);
 
@@ -78,11 +88,11 @@ void read_proximity_sensors_diagonal()
     
     digitalWriteFast(DIAGONAL_DIODES, LOW);
 
-    diagonal_left_sensor = (uint16_t)emitter_on->result_adc0 - (uint16_t)emitter_off->result_adc0;
-    diagonal_right_sensor = (uint16_t)emitter_on->result_adc1 - (uint16_t)emitter_off->result_adc1;
+    proximity_sensors->diagonal_left_sensor = (uint16_t)emitter_on->result_adc0 - (uint16_t)emitter_off->result_adc0;
+    proximity_sensors->diagonal_right_sensor = (uint16_t)emitter_on->result_adc1 - (uint16_t)emitter_off->result_adc1;
 }
 
-void read_proximity_sensors_side()
+void read_proximity_sensors_side(proximity_sensors_t* proximity_sensors)
 {
     emitter_off = adc->analogSyncRead(SENSOR_SIDES_LEFT, SENSOR_SIDES_RIGHT);
 
@@ -93,8 +103,8 @@ void read_proximity_sensors_side()
     
     digitalWriteFast(SIDE_DIODES, LOW);
 
-    side_left_sensor = (uint16_t)emitter_on->result_adc0 - (uint16_t)emitter_off->result_adc0;
-    side_right_sensor = (uint16_t)emitter_on->result_adc1 - (uint16_t)emitter_off->result_adc1;
+    proximity_sensors->side_left_sensor = (uint16_t)emitter_on->result_adc0 - (uint16_t)emitter_off->result_adc0;
+    proximity_sensors->side_right_sensor = (uint16_t)emitter_on->result_adc1 - (uint16_t)emitter_off->result_adc1;
 }
 
 ////////////////////////////////////////////////////////////

@@ -54,12 +54,14 @@ Encoder right_encoder(RIGHT_MOTOR_ENCODER_A, RIGHT_MOTOR_ENCODER_B);
 #define SENSOR_EMITTER_ON_TIME 320 // Microseconds
 
 // Global Variables
-uint16_t front_left_sensor = 0;
-uint16_t front_right_sensor = 0;
-uint16_t side_left_sensor = 0;
-uint16_t side_right_sensor = 0;
-uint16_t diagonal_left_sensor = 0;
-uint16_t diagonal_right_sensor = 0;
+typedef struct {
+    uint16_t front_left_sensor;
+    uint16_t front_right_sensor;
+    uint16_t side_left_sensor;
+    uint16_t side_right_sensor;
+    uint16_t diagonal_left_sensor;
+    uint16_t diagonal_right_sensor;
+} proximity_sensors_t;
 
 float acc_x;
 float acc_y;
@@ -77,11 +79,13 @@ long previous_encoder_count_right = 0;
 
 // Functions that take use of the ADC
 void init_adc();
-void read_proximity_sensors();
-void read_proximity_sensors_front();
-void read_proximity_sensors_diagonal();
-void read_proximity_sensors_side();
-float read_battery_voltage();
+void init_proximity_sensors_struct(proximity_sensors_t* proximity_sensors);
+
+void read_proximity_sensors(proximity_sensors_t* proximity_sensors);
+void read_proximity_sensors_front(proximity_sensors_t* proximity_sensors);
+void read_proximity_sensors_diagonal(proximity_sensors_t* proximity_sensors);
+void read_proximity_sensors_side(proximity_sensors_t* proximity_sensors);
+void read_battery_voltage();
 
 // Functions that take use of the 
 // Accelerometer and/or the Gyroscope
