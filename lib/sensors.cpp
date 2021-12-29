@@ -158,3 +158,28 @@ void read_accelerometer()
 {
     lsm6ds33.readAcceleration(acc_x, acc_y, acc_z);
 }
+
+
+////////////////////////////////////////////////////////////
+// Encoders
+////////////////////////////////////////////////////////////
+
+void clear_encoders()
+{
+    left_encoder.write(0);
+    right_encoder.write(0);
+}
+
+relative_position_t get_encoder_relative_position()
+{
+    relative_position_t relative_position;
+    left_encoder_count = left_encoder.read();
+    right_encoder_count = left_encoder.read();
+
+    relative_position.distance = 
+        (right_encoder_count + left_encoder_count) * MM_PER_COUNT;
+    relative_position.angle = 
+        (right_encoder_count - left_encoder_count) * DEG_PER_COUNT;
+
+    return relative_position;
+}
