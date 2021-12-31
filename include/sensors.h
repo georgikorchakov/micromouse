@@ -93,6 +93,7 @@ void read_proximity_sensors(proximity_sensors_t* proximity_sensors);
 void read_proximity_sensors_front(proximity_sensors_t* proximity_sensors);
 void read_proximity_sensors_diagonal(proximity_sensors_t* proximity_sensors);
 void read_proximity_sensors_side(proximity_sensors_t* proximity_sensors);
+struct push_buttons read_push_buttons()
 void read_battery_voltage();
 
 // Functions that take use of the 
