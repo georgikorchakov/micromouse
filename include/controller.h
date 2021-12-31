@@ -72,6 +72,7 @@ void profile_set_state(profile_t* profile, uint8_t state);
 float profile_get_position(profile_t* profile);
 float profile_get_speed(profile_t* profile);
 float profile_get_distance_by_one_systick(profile_t* profile);
+uint8_t profile_is_finished(profile_t* profile);
 float profile_get_acceleration(profile_t* profile)
 void profile_set_speed(profile_t* profile, float speed);
 void profile_set_target_speed(profile_t* profile, float speed);

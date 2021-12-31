@@ -223,6 +223,11 @@ float distance_required_for_deceleration(profile_t* profile)
                   - profile->speed * profile->speed ) / (2 * profile->acceleration);
 }
 
+uint8_t profile_is_finished(profile_t* profile)
+{
+    return profile->state == PROFILE_STATE_FINISHED;
+}
+
 void profile_stop(profile_t* profile)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
