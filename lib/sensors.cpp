@@ -111,6 +111,11 @@ void read_proximity_sensors_side(proximity_sensors_t* proximity_sensors)
 // Battery Voltage
 ////////////////////////////////////////////////////////////
 
+float adc_reading_to_voltage(int adc_value)
+{
+    return ( (float)adc_value * 3.3 ) / adc->adc0->getMaxValue();
+}
+
 /* A voltage divider is attached to this pin, that measures the battery voltage.
  * R1 = 18k 1%, R2 = 13k 1%
  * By the voltage divider formula, when the input voltage is 7.869V, 
@@ -120,16 +125,43 @@ float read_battery_voltage()
 {
     // Is it integer?   TODO: Check!
     int adc_value = adc->adc0->analogRead(BATTERY_VOLTAGE_LEVEL);
-    float pin_voltage = ( (float)adc_value * 3.3 ) / adc->adc0->getMaxValue();
 
-    return (pin_voltage * 31) / 13;
+    return (adc_reading_to_voltage(adc_value) * 31) / 13;
 }
 
 ////////////////////////////////////////////////////////////
 // Buttons
 ////////////////////////////////////////////////////////////
 
-// TODO: Button functions
+struct push_buttons read_push_buttons()
+{
+    struct push_buttons buttons;
+    buttons.up = digitalReadFast(BUTTON1);
+    buttons.down = digitalReadFast(BUTTON2);
+
+    int additional_buttons = adc->adc0->analogRead(ADDITIONAL_BUTTONS);
+    float additional_buttons_voltage = adc_reading_to_voltage(additional_buttons);
+
+    buttons.left = 0;
+    buttons.center = 0;
+    buttons.right = 0;
+
+    if (additional_buttons_voltage > 2.29 && additional_buttons_voltage < 2.422)
+    {
+        buttons.left = 1;
+    }
+    else if (additional_buttons_voltage >= 2.117 && additional_buttons_voltage <= 2.29)
+    {
+        buttons.center = 1;
+    }
+    else if (additional_buttons_voltage <= 2.117)
+    {
+        buttons.right = 1;
+    }
+
+    return buttons;
+}   
+
 
 ////////////////////////////////////////////////////////////
 // Accelerometer and Gyroscope

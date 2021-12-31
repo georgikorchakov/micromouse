@@ -63,6 +63,14 @@ typedef struct {
     uint16_t diagonal_right_sensor;
 } proximity_sensors_t;
 
+struct push_buttons {
+    uint8_t up     : 1;
+    uint8_t down   : 1;
+    uint8_t center : 1;
+    uint8_t left   : 1;
+    uint8_t right  : 1;
+};
+
 float acc_x;
 float acc_y;
 float acc_z;
