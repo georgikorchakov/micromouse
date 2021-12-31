@@ -29,6 +29,7 @@ uint8_t get_maze_cell(uint8_t x, uint8_t y);
 void set_maze_cell(uint8_t x, uint8_t y, uint8_t cell);
 void print_maze_advanced(uint8_t maze_select);
 void update_cell_single_wall(uint8_t x, uint8_t y, uint8_t add_wall, uint8_t direction);
+uint8_t add_maze_border(uint8_t x, uint8_t y);
 void update_cell_walls(uint8_t x, uint8_t y, uint8_t walls);
 void debug_maze_matrix();
 

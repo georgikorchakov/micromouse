@@ -1,7 +1,7 @@
 #include "../include/maze_mapping.h"
 
 // From the start, the maze will be seen as:
-//        NORT
+//       NORTH
 //         ^
 //         |
 // WEST <- . -> EAST
@@ -70,8 +70,35 @@ void update_cell_single_wall(uint8_t x, uint8_t y, uint8_t add_wall, uint8_t dir
     set_maze_cell(x, y, maze_cell);
 }
 
+uint8_t add_maze_border(uint8_t x, uint8_t y)
+{
+    uint8_t walls = 0;
+
+    if (x == 0)
+    {
+        walls |= (1 << WEST);
+    }
+    else if (x == MAZE_SIZE_X - 1)
+    {
+        walls |= (1 << EAST);
+    }
+
+    if (y == 0)
+    {
+        walls |= (1 << SOUTH);
+    }
+    else if (y == MAZE_SIZE_Y - 1)
+    {
+        walls |= (1 << NORTH);
+    }
+
+    return walls;
+}
+
 void update_cell_walls(uint8_t x, uint8_t y, uint8_t walls)
 {
+    walls |= add_maze_border(x, y);
+
     // Update the current cell
     uint8_t maze_cell = get_maze_cell(x, y);
     maze_cell = (walls << 4) | walls ;
@@ -249,22 +276,25 @@ void debug_maze_matrix()
     }
 }
 
-// int main()
-// {
-//     init_maze();
+/*
+int main()
+{
+    init_maze();
 
-//     update_cell_walls(7, 7, (1 << WEST) | (1 << SOUTH));
-//     update_cell_walls(7, 8, (1 << NORTH) | (1 << WEST));
-//     update_cell_walls(8, 7, (1 << SOUTH) | (1 << EAST));
-//     update_cell_walls(8, 8, (1 << NORTH) | (1 << EAST));
+    update_cell_walls(7, 7, (1 << WEST) | (1 << SOUTH));
+    update_cell_walls(7, 8, (1 << NORTH) | (1 << WEST));
+    update_cell_walls(8, 7, (1 << SOUTH) | (1 << EAST));
+    update_cell_walls(8, 8, (1 << NORTH) | (1 << EAST));
 
-//     update_cell_walls(0, 0, (1 << WEST) | (1 << EAST) | (1 << SOUTH));
-//     update_cell_walls(0, 1, (1 << WEST) | (1 << EAST));
+    update_cell_walls(0, 0, (1 << WEST) | (1 << EAST));
+    update_cell_walls(0, 1, (1 << WEST) | (1 << EAST));
+    update_cell_walls(0, 2, (1 << WEST) | (1 << EAST));
 
-//     debug_maze_matrix();
+    //debug_maze_matrix();
 
-//     print_maze_advanced(CLOSED_MAZE);
-//     print_maze(CLOSED_MAZE);
+    //print_maze_advanced(CLOSED_MAZE);
+    print_maze(CLOSED_MAZE);
 
-//     return 0;
-// }
+    return 0;
+}
+*/
