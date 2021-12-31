@@ -130,6 +130,70 @@ void update_cell_walls(uint8_t x, uint8_t y, uint8_t walls)
     }
 }
 
+uint8_t synchronize_walls_with_direction(uint8_t left_wall, uint8_t front_wall, uint8_t right_wall, uint8_t direction)
+{
+    if (direction == NORTH)
+    {
+        if (front_wall)
+        {
+            walls |= NORTH_WALL;
+        }
+        if (left_wall)
+        {
+            walls |= WEST_WALL;
+        }
+        if (right_wall)
+        {
+            walls |= EAST_WALL;
+        }
+    }
+    else if (direction == EAST)
+    {
+        if (front_wall)
+        {
+            walls |= EAST_WALL;
+        }
+        if (left_wall)
+        {
+            walls |= NORTH_WALL;
+        }
+        if (right_wall)
+        {
+            walls |= SOUTH_WALL;
+        }  
+    }
+    else if (direction == SOUTH)
+    {
+        if (front_wall)
+        {
+            walls |= SOUTH_WALL;
+        }
+        if (left_wall)
+        {
+            walls |= EAST_WALL;
+        }
+        if (right_wall)
+        {
+            walls |= WEST_WALL;
+        }
+    }
+    else if (direction == WEST)
+    {
+        if (front_wall)
+        {
+            walls |= WEST_WALL;
+        }
+        if (left_wall)
+        {
+            walls |= SOUTH_WALL;
+        }
+        if (right_wall)
+        {
+            walls |= NORTH_WALL;
+        }
+    }
+}
+
 void print_maze(uint8_t maze_select)
 {
     for (uint8_t maze_y = 0; maze_y < MAZE_SIZE_Y; ++maze_y)
