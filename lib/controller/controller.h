@@ -29,6 +29,7 @@
 #define KD_R 3//3//2 //2.0
 
 extern IntervalTimer systick_interrupt;
+extern proximity_sensors_t *contoller_proximity_sensors;
 
 extern float speed_error;
 extern float rotation_error;

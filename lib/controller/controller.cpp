@@ -30,7 +30,8 @@ void systick()
 
     // timestamp_t timestamp;
 
-    // read_proximity_sensors(&contoller_proximity_sensors);
+    read_proximity_sensors_side(&contoller_proximity_sensors);
+    //read_proximity_sensors(&contoller_proximity_sensors);
     // log_proximity_sensors_to_timestap(&timestamp, &contoller_proximity_sensors);
     
     // Read the encoders

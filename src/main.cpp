@@ -120,7 +120,7 @@ void search_mode()
     // Start the controller
     start_systick_interrupt();
     start_controller_output();
-    enable_systick_function();
+    //enable_systick_function();
 
     // Position in the center of the start cell
     move_forward_from_the_start();
@@ -200,7 +200,7 @@ void search_mode()
 
     // Exit search mode
 
-    disable_systick_function();
+    //disable_systick_function();
     stop_controller_output();
     stop_systick_interrupt();
 
