@@ -20,8 +20,13 @@ int voltage_to_pwm(float voltage)
     return (int)( voltage * multiplier * sign_multiplier );
 }
 
-void configure_pwm_for_motors()
+void init_pwm_for_motors()
 {
+    pinMode(B_ENABLE, OUTPUT);
+    pinMode(B_PHASE, OUTPUT);
+    pinMode(A_ENABLE, OUTPUT);
+    pinMode(A_PHASE, OUTPUT);
+
     // We are aiming for higher resolution, 
     // so we will have higher precision
     analogWriteResolution(PWM_RESOLUTION);
@@ -51,12 +56,12 @@ void set_right_motor_pwm(int speed)
 {
     if (speed < 0)
     {
-        digitalWriteFast(B_PHASE, LOW);
+        digitalWriteFast(B_PHASE, HIGH);
         speed = abs(speed);
     }
     else
     {
-        digitalWriteFast(B_PHASE, HIGH);
+        digitalWriteFast(B_PHASE, LOW);
     }
 
     analogWrite(B_ENABLE, speed);

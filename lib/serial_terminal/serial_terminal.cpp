@@ -1,4 +1,50 @@
-#include "../include/serial_terminal.h"
+#include "serial_terminal.h"
+
+char* show_functions_str[] = {
+    "maze",
+    "best", // best path
+    "optimization",
+    "speed", // speed profile
+    "rotational", // rotational profile
+    "battery", // battery voltage
+    "proximity",
+    "gyroscope",
+    "accelerometer",
+    "encoders",
+    "stop"
+};
+
+int (*show_functions[]) (char**) = {
+    &show_maze,
+    &show_best_path,
+    &show_optimization,
+    &show_speed_profile,
+    &show_rotational_profile,
+    &show_battery_voltage,
+    &show_proximity,
+    &show_gyroscope,
+    &show_accelerometer,
+    &show_encoders,
+    &show_stop
+};
+
+char* builtin_str[] = {
+    "help",
+    "show",
+    "enable",
+    "set",
+    "inspect",
+    "man"
+};
+
+int (*builtin_func[]) (char**) = {
+    &help,
+    &show,
+    &enable,
+    &set,
+    &inspect,
+    &man
+};
 
 ////////////////////////////////////////////////////////////
 // Enable Command
@@ -6,7 +52,7 @@
 
 int enable(char** args)
 {
-    printf("Enable command\n");
+    Serial.print("Enable command\n");
     return 1;
 }
 
@@ -17,7 +63,7 @@ int enable(char** args)
 
 int set(char** args)
 {
-    printf("Set command\n");
+    Serial.print("Set command\n");
     return 1;
 }
 
@@ -26,12 +72,45 @@ int set(char** args)
 // Inspect Command
 ////////////////////////////////////////////////////////////
 
+// inspect cell [x] [y] 0 2 -s [system] proximity
+// cell entered
+// statistics
+// changes in profile
+
 int inspect(char** args)
 {
     if (strcmp(args[0], "man") == 0)
     {
         inspect_man();
         return 1;
+    }
+    else
+    {
+        while (true)
+        {
+            char* line_inspect;
+            char** args_inspect;
+
+            Serial.print("[Inspect] > ");
+            line_inspect = read_line();
+            args_inspect = split_line(line_inspect);
+
+            if (strcmp(args_inspect[0], "exit") == 0)
+            {
+                break;
+            }
+            else if (strcmp(args_inspect[0], "maze") == 0)
+            {
+                print_maze(OPEN_MAZE);
+                Serial.print("Which cell do you want to inspect!\n");
+            }
+            else
+            {
+                Serial.println(line_inspect);
+            }
+            free(line_inspect);
+            free(args_inspect);
+        }
     }
 
     return 1;
@@ -54,7 +133,7 @@ void inspect_man()
         "\n\tGeorgi D. Korchakov"
         "\n\n\t\t\t\tDec. 28, 2021\n\0";
 
-    printf("%s", inspect_manual);
+    Serial.print(inspect_manual);
 }
 
 
@@ -91,7 +170,7 @@ int show_maze(char** args)
     }
     else
     {
-        printf("Paramethers after \"show maze\" are not recognized.\nTry \"man show\" for more information.\n");
+        Serial.print("Paramethers after \"show maze\" are not recognized.\nTry \"man show\" for more information.\n");
     }
 
     return 1;
@@ -119,11 +198,40 @@ int show_rotational_profile(char** args)
 
 int show_battery_voltage(char** args)
 {
+    Serial.print("\nBattery Voltage: ");
+    Serial.print(read_battery_voltage());
+    Serial.println("V");
+    Serial.println();
     return 1;
 }
 
 int show_proximity(char** args)
 {
+    proximity_sensors_t *proximity = 
+        init_proximity_sensors_struct();
+    read_proximity_sensors(&proximity);
+
+    Serial.print("\nSensor Sides Left: ");
+    Serial.println(proximity->side_left_sensor);
+
+    Serial.print("Sensor Sides Right: ");
+    Serial.println(proximity->side_right_sensor);
+
+    Serial.print("\nSensor Front Left: ");
+    Serial.println(proximity->front_left_sensor);
+
+    Serial.print("Sensor Front Right: ");
+    Serial.println(proximity->front_right_sensor);
+
+    Serial.print("\nSensor Diagonal Left: ");
+    Serial.println(proximity->diagonal_left_sensor);
+
+    Serial.print("Sensor Diagonal Right: ");
+    Serial.println(proximity->diagonal_right_sensor);
+
+    Serial.println();
+
+
     return 1;
 }
 
@@ -139,6 +247,20 @@ int show_accelerometer(char** args)
 
 int show_encoders(char** args)
 {
+    Serial.println("\n----- Just Counts ----- ");
+    Serial.print("Left Encoder Counts:  ");
+    Serial.println(left_encoder->read());
+    Serial.print("Right Encoder Counts: ");
+    Serial.println(right_encoder->read());
+
+    Serial.println("\n----- Relative Position -----");
+    relative_position_t pos = get_encoder_relative_position();
+    Serial.print("Distance: ");
+    Serial.println(pos.distance);
+    Serial.print("Angle: ");
+    Serial.println(pos.angle);
+    Serial.println();
+
     return 1;
 }
 
@@ -214,7 +336,7 @@ void show_man()
         "\n\tGeorgi D. Korchakov"
         "\n\n\t\t\t\tDec. 28, 2021\n\0";
 
-    printf("%s", show_manual);
+    Serial.print(show_manual);
 }
 
 
@@ -226,19 +348,20 @@ int help(char** args)
 {
     if (strcmp(args[0], "man") == 0)
     {
-        printf("Are you really so stupid, that you need\na manual for this command!\n");
+        Serial.print("Are you really so stupid, that you need\na manual for this command!\n");
         return 1;
     }
 
     if (args[1] == NULL)
     {
-        printf("Welcome to Micromouse shell terminal!\n");
-        printf("List of available commands:\n");
+        Serial.print("Welcome to Micromouse shell terminal!\n");
+        Serial.print("List of available commands:\n");
         for (int i = 0; i < num_builtins(); ++i)
         {
-            printf("    %s\n", builtin_str[i]);
+            Serial.print("    ");
+            Serial.println(builtin_str[i]);
         }
-        printf("Use: \"man [command name]\"\n");
+        Serial.print("Use: \"man [command name]\"\n");
     }
 
     return 1;
@@ -253,9 +376,9 @@ int man(char** args)
 {
     if (args[1] == NULL)
     {
-        printf("man: expected argument\n");
-        printf("Try \"man [command]\"\n");
-        printf("Or try \"help\"\n");
+        Serial.print("man: expected argument\n");
+        Serial.print("Try \"man [command]\"\n");
+        Serial.print("Or try \"help\"\n");
         return 1;
     }
     
@@ -295,8 +418,8 @@ int execute(char** args)
         }
     }
 
-    printf("The command is not found!\n");
-    printf("Try: \"help\"\n");
+    Serial.print("The command is not found!\n");
+    Serial.print("Try: \"help\"\n");
     return 0;
 }
 
@@ -310,23 +433,26 @@ char* read_line()
     if (!buffer)
     {
         // An error occured
-        printf("Buffer alocation failed!\n");
+        Serial.print("Buffer alocation failed!\n");
         return NULL;
     }
 
     while (1)
     {
-        c = getchar();
+        while(Serial.available() == 0);
+        c = Serial.read();
+        Serial.print((char)c);
 
-        if (c == EOF || c == '\n')
+        //c == EOF || 
+        if (c == '\n')
         {
             buffer[position] = '\0';
             return buffer;
         }
-        else if (c == -1)
-        {
-            return buffer;
-        }
+        // else if (c == -1)
+        // {
+        //     return buffer;
+        // }
         else
         {
             buffer[position] = c;
@@ -342,7 +468,7 @@ char* read_line()
             if (!buffer)
             {
                 // An error occured
-                printf("Buffer alocation failed!\n");
+                Serial.print("Buffer alocation failed!\n");
                 return NULL;
             }
         }
@@ -358,7 +484,7 @@ char** split_line(char* line)
 
     if (!tokens)
     {
-        printf("Buffer alocation failed!\n");
+        Serial.print("Buffer alocation failed!\n");
         return NULL;
     }
 
@@ -375,7 +501,7 @@ char** split_line(char* line)
 
             if (!tokens)
             {
-                printf("Buffer alocation failed!\n");
+                Serial.print("Buffer alocation failed!\n");
                 return NULL;
             }
         }
@@ -387,27 +513,27 @@ char** split_line(char* line)
     return tokens;
 }
 
-void serial_terminal()
+void init_serial_terminal()
 {
-    char* line;
-    char** args;
-
-    printf("[Micromouse] > ");
-    line = read_line();
-    args = split_line(line);
-    execute(args);
-
-    free(line);
-    free(args);
+    Serial.begin(115200);
+    Serial.print("[Micromouse] > ");
 }
 
-int main()
+void serial_terminal()
 {
-    init_maze();
-    while (1)
+    // while(Serial.available() == 0);
+    if (Serial.available() != 0)
     {
-        serial_terminal();
-    }
+        char* line;
+        char** args;
 
-    return 0;
+        line = read_line();
+        args = split_line(line);
+        execute(args);
+        
+        Serial.print("[Micromouse] > ");
+
+        free(line);
+        free(args);
+    }
 }

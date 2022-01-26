@@ -1,4 +1,4 @@
-#include "../include/maze_mapping.h"
+#include "maze_mapping.h"
 
 // From the start, the maze will be seen as:
 //       NORTH
@@ -132,6 +132,7 @@ void update_cell_walls(uint8_t x, uint8_t y, uint8_t walls)
 
 uint8_t synchronize_walls_with_direction(uint8_t left_wall, uint8_t front_wall, uint8_t right_wall, uint8_t direction)
 {
+    uint8_t walls = 0;
     if (direction == NORTH)
     {
         if (front_wall)
@@ -192,67 +193,127 @@ uint8_t synchronize_walls_with_direction(uint8_t left_wall, uint8_t front_wall, 
             walls |= NORTH_WALL;
         }
     }
+
+    return walls;
 }
+
+// int8_t two_bit(int8_t bits)
+// {
+//     if (bits < 0)
+//     {
+//         bits = 3;
+//     }
+//     else if (bits > 3)
+//     {
+//         bits = 0;
+//     }
+
+//     return bits;
+// }
+
+// uint8_t update_direction(uint8_t direction, uint8_t turn)
+// {
+//     if (turn == LEFT)
+//     {
+//         return two_bit(direction + 1);
+//     }
+//     else if (turn == RIGHT)
+//     {
+//         return two_bit(direction - 1);
+//     }
+// }
+
+// uint8_t update_y(uint8_t y, uint8_t direction)
+// {
+//     if (direction == NORTH)
+//     {
+//         return y + 1;
+//     }
+//     else if (direction == SOUTH)
+//     {
+//         return y - 1;
+//     }
+//     else
+//     {
+//         return y;
+//     }
+// }
+
+// uint8_t update_x(uint8_t x, uint8_t direction)
+// {
+//     if (direction == EAST)
+//     {
+//         return x + 1;
+//     }
+//     else if (direction == WEST)
+//     {
+//         return x - 1;
+//     }
+//     else
+//     {
+//         return x;
+//     }
+// }
 
 void print_maze(uint8_t maze_select)
 {
     for (uint8_t maze_y = 0; maze_y < MAZE_SIZE_Y; ++maze_y)
     {
-        printf("+");
+        Serial.print("+");
         for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
         {
            if ( (maze[maze_y][maze_x] >> maze_select) & (1 << NORTH) ) 
            {
-               printf("---+");
+               Serial.print("---+");
            }
            else
            {
-               printf("   +");
+               Serial.print("   +");
            }
         }
 
-        printf("\n");
+        Serial.print("\n");
 
         for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
         {
            if ( (maze[maze_y][maze_x] >> maze_select) & (1 << WEST) ) 
            {
-               printf("|   ");
+               Serial.print("|   ");
            }
            else
            {
-               printf("    ");
+               Serial.print("    ");
            }
 
            if (maze_x == MAZE_SIZE_X - 1)
            {
                if ( (maze[maze_y][maze_x] >> maze_select) & (1 << EAST) ) 
                 {
-                    printf("|");
+                    Serial.print("|");
                 }
                 else
                 {
-                    printf(" \n");
+                    Serial.print(" \n");
                 }
            }
         }
-        printf(" \n");
+        Serial.print(" \n");
 
         if (maze_y == MAZE_SIZE_Y - 1)
         {
-            printf("+");
+            Serial.print("+");
             for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
             {
                 if ( (maze[maze_y][maze_x] >> maze_select) & (1 << SOUTH) ) 
                 {
-                    printf("---+");
+                    Serial.print("---+");
                 }
                 else
                 {
-                    printf("   +");
+                    Serial.print("   +");
                 }
             }
-            printf("\n");
+            Serial.print("\n");
         }
     }
 }
@@ -261,83 +322,87 @@ void print_maze_advanced(uint8_t maze_select)
 {
     for (uint8_t maze_y = 0; maze_y < MAZE_SIZE_Y; ++maze_y)
     {
-        printf("  ");
+        Serial.print("  ");
         for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
         {
            if ( (maze[maze_y][maze_x] >> maze_select) & (1 << NORTH) ) 
            {
-               printf("+---+");
+               Serial.print("+---+");
            }
            else
            {
-               printf("+   +");
+               Serial.print("+   +");
            }
         }
 
-        printf("\n%2d", 15 - maze_y);
+        char num[4];
+        sprintf(num, "\n%2d", 15 - maze_y);
+        Serial.print(num);
 
         for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
         {
            if ( (maze[maze_y][maze_x] >> maze_select) & (1 << WEST) ) 
            {
-               printf("|");
+               Serial.print("|");
            }
            else
            {
-               printf(" ");
+               Serial.print(" ");
            }
 
            if ( (maze[maze_y][maze_x] >> maze_select) & (1 << EAST) ) 
            {
-               printf("   |");
+               Serial.print("   |");
            }
            else
            {
-               printf("    ");
+               Serial.print("    ");
            }
         }
 
-        printf("\n  ");
+        Serial.print("\n  ");
 
         for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
         {
            if ( (maze[maze_y][maze_x] >> maze_select) & (1 << SOUTH) ) 
            {
-               printf("+---+");
+               Serial.print("+---+");
            }
            else
            {
-               printf("+   +");
+               Serial.print("+   +");
            }
         }
 
-        printf("\n");
+        Serial.print("\n");
     }
 
-    printf(" ");
+    Serial.print(" ");
     for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
     {
-        printf("  ");
-        printf("%3d", maze_x);
+        Serial.print("  ");
+        char num[4];
+        sprintf(num, "%3d", maze_x);
+        Serial.print(num);
     }
 
-    printf("\n");
+    Serial.print("\n");
 }
 
 void debug_maze_matrix()
 {
-    for (uint8_t maze_y = 0; maze_y < MAZE_SIZE_Y; ++maze_y)
-    {
-        for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
-        {
-            printf("x: %d, y: %d | North: %d East: %d South: %d West: %d \n",
-                    maze_x, maze_y,
-                    (get_maze_cell(maze_x, maze_y) & (1 << NORTH)) >> NORTH,
-                    (get_maze_cell(maze_x, maze_y) & (1 << EAST)) >> EAST,
-                    (get_maze_cell(maze_x, maze_y) & (1 << SOUTH)) >> SOUTH,
-                    (get_maze_cell(maze_x, maze_y) & (1 << WEST)) >> WEST);
-        }
-    }
+    // for (uint8_t maze_y = 0; maze_y < MAZE_SIZE_Y; ++maze_y)
+    // {
+    //     for (uint8_t maze_x = 0; maze_x < MAZE_SIZE_X; ++maze_x)
+    //     {
+    //         printf("x: %d, y: %d | North: %d East: %d South: %d West: %d \n",
+    //                 maze_x, maze_y,
+    //                 (get_maze_cell(maze_x, maze_y) & (1 << NORTH)) >> NORTH,
+    //                 (get_maze_cell(maze_x, maze_y) & (1 << EAST)) >> EAST,
+    //                 (get_maze_cell(maze_x, maze_y) & (1 << SOUTH)) >> SOUTH,
+    //                 (get_maze_cell(maze_x, maze_y) & (1 << WEST)) >> WEST);
+    //     }
+    // }
 }
 
 /*

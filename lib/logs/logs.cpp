@@ -42,7 +42,7 @@
 timestamp_t timestamp_array[MAX_TIMESTAMPS];
 profile_timestamp_t profile_timestamp_array[MAX_PROFILE_TIMESTAMPS];
 uint16_t log_counter = 0;
-uint8_t log_profile_counter = 0;
+uint16_t log_profile_counter = 0;
 
 // This flag is set by the user
 uint8_t logging_enabled = false;
@@ -60,16 +60,16 @@ void log_disable() { logging_enabled = false; }
 void log_profile_enable() { logging_profile_enabled = true; }
 void log_profile_disable() { logging_profile_enabled = false; }
 
-void log_proximity_sensors_to_timestap(timestamp_t* timestamp, proximity_sensors_t* proximity_sensors)
+void log_proximity_sensors_to_timestap(timestamp_t* timestamp, proximity_sensors_t **__proximity_sensors)
 {
     if (logging_enabled && start_logging)
     {
-        timestamp->front_left_sensor = proximity_sensors->front_left_sensor;
-        timestamp->front_right_sensor = proximity_sensors->front_right_sensor;
-        timestamp->side_left_sensor = proximity_sensors->side_left_sensor;
-        timestamp->side_right_sensor = proximity_sensors->side_right_sensor;
-        timestamp->diagonal_left_sensor = proximity_sensors->diagonal_left_sensor;
-        timestamp->diagonal_right_sensor = proximity_sensors->diagonal_right_sensor;
+        timestamp->front_left_sensor = (*__proximity_sensors)->front_left_sensor;
+        timestamp->front_right_sensor = (*__proximity_sensors)->front_right_sensor;
+        timestamp->side_left_sensor = (*__proximity_sensors)->side_left_sensor;
+        timestamp->side_right_sensor = (*__proximity_sensors)->side_right_sensor;
+        timestamp->diagonal_left_sensor = (*__proximity_sensors)->diagonal_left_sensor;
+        timestamp->diagonal_right_sensor = (*__proximity_sensors)->diagonal_right_sensor;
     }
 }
 
@@ -92,11 +92,11 @@ void log_position_in_the_maze_to_timestamp(timestamp_t* timestamp, uint8_t cell_
     }
 }
 
-void log_gyroscope_z_to_timestamp(timestamp_t* timestamp, float gyroscope_x)
+void log_gyroscope_z_to_timestamp(timestamp_t* timestamp, float gyroscope_z)
 {
     if (logging_enabled && start_logging)
     {
-        timestamp->gyroscope_x = gyroscope_x;
+        timestamp->gyroscope_z = gyroscope_z;
     }
 }
 
