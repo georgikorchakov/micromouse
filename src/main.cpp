@@ -95,19 +95,19 @@ void user_mode()
     }
 }
 
-int8_t two_bit(int8_t bits)
-{
-    if (bits < 0)
-    {
-        bits = 3;
-    }
-    else if (bits > 3)
-    {
-        bits = 0;
-    }
+// int8_t two_bit(int8_t bits)
+// {
+//     if (bits < 0)
+//     {
+//         bits = 3;
+//     }
+//     else if (bits > 3)
+//     {
+//         bits = 0;
+//     }
 
-    return bits;
-}
+//     return bits;
+// }
 
 void search_mode()
 {
@@ -150,80 +150,39 @@ void search_mode()
         if (next_step == DIRECTION_FORWARD)
         {
             one_cell_forward();
-            if (direction == NORTH)
-            {
-                ++y;
-            }
-            else if (direction == EAST)
-            {
-                ++x;
-            }
-            else if (direction == SOUTH)
-            {
-                --y;
-            }
-            else if (direction == WEST)
-            {
-                --x;
-            }
+            x = update_x(x, direction);
+            y = update_y(y, direction);
         }
         else if (next_step == DIRECTION_LEFT_FORWARD)
         {
             left_pivot_turn();
             one_cell_forward();
 
-            direction = two_bit(direction + 1);
-            if (direction == NORTH)
-            {
-                ++y;
-            }
-            else if (direction == EAST)
-            {
-                ++x;
-            }
-            else if (direction == SOUTH)
-            {
-                --y;
-            }
-            else if (direction == WEST)
-            {
-                --x;
-            }
+            direction = update_direction(direction, LEFT);
+            x = update_x(x, direction);
+            y = update_y(y, direction);
         }
         else if (next_step == DIRECTION_RIGHT_FORWARD)
         {
             right_pivot_turn();
             one_cell_forward();
 
-            direction = two_bit(direction - 1);
-            if (direction == NORTH)
-            {
-                ++y;
-            }
-            else if (direction == EAST)
-            {
-                ++x;
-            }
-            else if (direction == SOUTH)
-            {
-                --y;
-            }
-            else if (direction == WEST)
-            {
-                --x;
-            }
+            direction = update_direction(direction, RIGHT);
+            x = update_x(x, direction);
+            y = update_y(y, direction);
+            
         }
         else if (next_step == DIRECTION_LEFT)
         {
             left_pivot_turn();
 
-            direction = two_bit(direction + 1);
+            direction = update_direction(direction, LEFT);
         }
         else if (next_step == DIRECTION_RIGHT)
         {
             right_pivot_turn();
 
-            direction = two_bit(direction - 1);
+            direction = update_direction(direction, RIGHT);
         }
 
         struct push_buttons_t push_buttons;
@@ -271,161 +230,3 @@ void loop()
             break;
     }
 }
-
-
-
-
-
-/*
-void one_cell_controller_test()
-{
-    pinMode(BUZZER, OUTPUT);
-    delay(3000);
-
-    tone(BUZZER, 1000);
-    delay(1000);
-    noTone(BUZZER);
-    start_systick_interrupt();
-
-    profile_start(&speed_profile, 0, 500, 0, 1000);
-    profile_start(&angle_profile, -90, 200, 0, 400);
-    // profile_start(&speed_profile, 0, 800, 0, 1500);
-    // profile_start(&angle_profile, 360, 200, 0, 500);// 500); //profile_start(&angle_profile, 180, 300, 0, 1000);
-    start_controller_output();
-    enable_systick_function();
-
-    unsigned long t1 = millis();
-    while (!profile_is_finished(&speed_profile) || !profile_is_finished(&angle_profile))
-    {
-        delay(1);
-    }
-    unsigned long t2 = millis();
-    
-
-    // delay(1000);
-
-    // profile_start(&speed_profile, 0, 500, 0, 1000);
-    // profile_start(&angle_profile, 180, 200, 0, 500);
-
-    // while (!profile_is_finished(&speed_profile) || !profile_is_finished(&angle_profile))
-    // {
-    //     delay(1);
-    // }
-
-    // delay(1000);
-
-    // profile_start(&speed_profile, 300, 500, 0, 1000);
-    // profile_start(&angle_profile, 0, 200, 0, 500);
-
-    // while (!profile_is_finished(&speed_profile) || !profile_is_finished(&angle_profile))
-    // {
-    //     delay(1);
-    // }
-
-    // delay(1000);
-
-    // profile_start(&speed_profile, 0, 500, 0, 1000);
-    // profile_start(&angle_profile, 180, 200, 0, 500);
-
-    // while (!profile_is_finished(&speed_profile) || !profile_is_finished(&angle_profile))
-    // {
-    //     delay(1);
-    // }
-
-    disable_systick_function();
-    stop_controller_output();
-    stop_systick_interrupt();
-
-    set_left_motor_pwm(0);
-    set_right_motor_pwm(0); 
-
-    relative_position_t pos = get_encoder_relative_position();
-    Serial.print("Distance: ");
-    Serial.println(pos.distance);
-    Serial.print("Angle: ");
-    Serial.println(pos.angle);
-
-    robot_mode = USER_MODE;
-
-    while(1)
-    {
-        Serial.print("Min: ");
-        Serial.print(min_e);
-        Serial.print(", Max: ");
-        Serial.println(max_e);
-
-        Serial.print("\nTime: ");
-        Serial.println(t2 - t1);
-        Serial.println();
-        delay(500);
-    }
-}
-
-
-void test_imaginary_maze()
-{
-    tone(BUZZER, 1000);
-    delay(1000);
-    noTone(BUZZER);
-
-    start_systick_interrupt();
-    start_controller_output();
-    enable_systick_function();
-
-
-    one_cell_forward(); // 1
-    // delay(1000);
-    left_pivot_turn(); // 2
-    // delay(1000);
-    // one_cell_forward(); //3
-    // delay(1000);
-    // one_cell_forward(); // 4
-    forward_cells(2);
-    // delay(1000);
-    left_pivot_turn(); // 5
-    // delay(1000);
-    one_cell_forward(); //6
-    // delay(1000);
-    right_pivot_turn(); //7
-    // delay(1000);
-    // one_cell_forward(); // 8
-    // delay(1000);
-    // one_cell_forward(); //9
-    // delay(1000);
-    // one_cell_forward(); // 10
-    forward_cells(3);
-    // delay(1000);
-    right_pivot_turn(); //11
-    // delay(1000);
-    one_cell_forward(); //12
-    // delay(1000);
-    right_pivot_turn(); //13
-    // delay(1000);
-    // one_cell_forward(); //14
-    // delay(1000);
-    // one_cell_forward(); //15
-    forward_cells(2);
-    // delay(1000);
-    left_pivot_turn(); // 16
-    // delay(1000);
-    one_cell_forward(); //17
-    // delay(1000);
-    left_pivot_turn(); // 18
-    // delay(1000);
-    one_cell_forward(); //19
-    
-    disable_systick_function();
-    stop_controller_output();
-    stop_systick_interrupt();
-
-    set_left_motor_pwm(0);
-    set_right_motor_pwm(0); 
-
-    tone(BUZZER, 1000);
-    delay(2000);
-    noTone(BUZZER);
-
-    while(1);
-}
-
-*/
