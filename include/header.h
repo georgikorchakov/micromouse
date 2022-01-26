@@ -54,8 +54,8 @@
 
 #define LEFT_MOTOR_ENCODER_A    10
 #define LEFT_MOTOR_ENCODER_B    11
-#define RIGHT_MOTOR_ENCODER_A   9
-#define RIGHT_MOTOR_ENCODER_B   12
+#define RIGHT_MOTOR_ENCODER_A   12
+#define RIGHT_MOTOR_ENCODER_B   9
 
 // A voltage devider is attached to this pin, that measures the battery voltage.
 // R1 = 18k 1%, R2 = 13k 1%
