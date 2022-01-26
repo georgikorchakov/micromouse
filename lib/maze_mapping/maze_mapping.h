@@ -31,10 +31,10 @@ void print_maze(uint8_t maze_select);
 uint8_t get_maze_cell(uint8_t x, uint8_t y);
 void set_maze_cell(uint8_t x, uint8_t y, uint8_t cell);
 uint8_t synchronize_walls_with_direction(uint8_t left_wall, uint8_t front_wall, uint8_t right_wall, uint8_t direction);
-// int8_t two_bit(int8_t bits);
-// uint8_t update_direction(uint8_t direction, uint8_t turn);
-// uint8_t update_y(uint8_t y, uint8_t direction);
-// uint8_t update_x(uint8_t x, uint8_t direction);
+int8_t two_bit(int8_t bits);
+uint8_t update_direction(uint8_t direction, uint8_t turn);
+uint8_t update_y(uint8_t y, uint8_t direction);
+uint8_t update_x(uint8_t x, uint8_t direction);
 
 void print_maze_advanced(uint8_t maze_select);
 void update_cell_single_wall(uint8_t x, uint8_t y, uint8_t add_wall, uint8_t direction);

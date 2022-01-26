@@ -197,63 +197,63 @@ uint8_t synchronize_walls_with_direction(uint8_t left_wall, uint8_t front_wall, 
     return walls;
 }
 
-// int8_t two_bit(int8_t bits)
-// {
-//     if (bits < 0)
-//     {
-//         bits = 3;
-//     }
-//     else if (bits > 3)
-//     {
-//         bits = 0;
-//     }
+int8_t two_bit(int8_t bits)
+{
+    if (bits < 0)
+    {
+        bits = 3;
+    }
+    else if (bits > 3)
+    {
+        bits = 0;
+    }
 
-//     return bits;
-// }
+    return bits;
+}
 
-// uint8_t update_direction(uint8_t direction, uint8_t turn)
-// {
-//     if (turn == LEFT)
-//     {
-//         return two_bit(direction + 1);
-//     }
-//     else if (turn == RIGHT)
-//     {
-//         return two_bit(direction - 1);
-//     }
-// }
+uint8_t update_direction(uint8_t direction, uint8_t turn)
+{
+    if (turn == LEFT)
+    {
+        return two_bit(direction + 1);
+    }
+    else if (turn == RIGHT)
+    {
+        return two_bit(direction - 1);
+    }
+}
 
-// uint8_t update_y(uint8_t y, uint8_t direction)
-// {
-//     if (direction == NORTH)
-//     {
-//         return y + 1;
-//     }
-//     else if (direction == SOUTH)
-//     {
-//         return y - 1;
-//     }
-//     else
-//     {
-//         return y;
-//     }
-// }
+uint8_t update_y(uint8_t y, uint8_t direction)
+{
+    if (direction == NORTH)
+    {
+        return y + 1;
+    }
+    else if (direction == SOUTH)
+    {
+        return y - 1;
+    }
+    else
+    {
+        return y;
+    }
+}
 
-// uint8_t update_x(uint8_t x, uint8_t direction)
-// {
-//     if (direction == EAST)
-//     {
-//         return x + 1;
-//     }
-//     else if (direction == WEST)
-//     {
-//         return x - 1;
-//     }
-//     else
-//     {
-//         return x;
-//     }
-// }
+uint8_t update_x(uint8_t x, uint8_t direction)
+{
+    if (direction == EAST)
+    {
+        return x + 1;
+    }
+    else if (direction == WEST)
+    {
+        return x - 1;
+    }
+    else
+    {
+        return x;
+    }
+}
 
 void print_maze(uint8_t maze_select)
 {
